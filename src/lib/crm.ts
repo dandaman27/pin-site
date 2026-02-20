@@ -6,7 +6,7 @@
  * has full visibility without leaving their CRM.
  */
 
-import type { OrderStatus } from "@/generated/prisma/client";
+import type { OrderStatus } from "@prisma/client";
 
 export interface CrmContactParams {
   email: string;
