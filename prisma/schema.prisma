@@ -1,0 +1,121 @@
+// Prisma schema for pin-site MVP
+// See: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─────────────────────────────────────────────
+// Enums
+// ─────────────────────────────────────────────
+
+enum OrderStatus {
+  QUOTE_REQUESTED
+  QUOTED
+  DEPOSIT_PAID
+  ART_IN_PROGRESS
+  PROOF_SENT
+  APPROVED
+  IN_PRODUCTION
+  SHIPPED
+  DELIVERED
+  PAYMENT_FAILED
+}
+
+enum AssetType {
+  CUSTOMER_UPLOAD
+  AI_IMAGE
+  PROOF
+  FINAL_ART
+}
+
+// ─────────────────────────────────────────────
+// Models
+// ─────────────────────────────────────────────
+
+model Customer {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  phone     String?
+  company   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orders Order[]
+}
+
+model Order {
+  id         String      @id @default(cuid())
+  customerId String
+  customer   Customer    @relation(fields: [customerId], references: [id])
+  status     OrderStatus @default(QUOTE_REQUESTED)
+
+  // Pricing (stored in cents)
+  subtotal      Int @default(0)
+  depositAmount Int @default(0)
+  balanceDue    Int @default(0)
+
+  // Stripe
+  stripeCustomerId               String?
+  stripeDepositCheckoutSessionId String?
+  stripePaymentMethodId          String?
+
+  // Shipping
+  shippingCarrier  String?
+  shippingTracking String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  items  OrderItem[]
+  assets Asset[]
+  events Event[]
+}
+
+model OrderItem {
+  id      String @id @default(cuid())
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id])
+
+  pinType     String
+  size        String
+  quantity    Int
+  colors      String
+  plating     String
+  attachments String
+  packaging   String
+  backerCard  String
+  notes       String?
+
+  createdAt DateTime @default(now())
+}
+
+model Asset {
+  id      String    @id @default(cuid())
+  orderId String
+  order   Order     @relation(fields: [orderId], references: [id])
+  type    AssetType
+
+  url          String
+  metadataJson Json   @default("{}")
+
+  createdAt DateTime @default(now())
+}
+
+/// Append-only audit log — one row per status change or notable event
+model Event {
+  id      String @id @default(cuid())
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id])
+
+  type        String
+  payloadJson Json   @default("{}")
+
+  createdAt DateTime @default(now())
+}
