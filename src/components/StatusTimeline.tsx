@@ -1,4 +1,4 @@
-import type { OrderStatus } from "@prisma/client";
+import type { OrderStatus } from "@/generated/prisma/client";
 
 const STEPS: { status: OrderStatus; label: string; description: string }[] = [
   {

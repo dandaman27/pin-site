@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import type { OrderStatus } from "@/generated/prisma";
+import type { OrderStatus } from "@/generated/prisma/client";
 import StatusTimeline from "@/components/StatusTimeline";
 import Link from "next/link";
 
