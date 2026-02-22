@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Nav from "@/components/Nav";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -14,9 +15,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PinCo — Custom Enamel Pins",
+  title: "PinCo — Custom Lapel Pins Made Easy",
   description:
-    "Design and order custom enamel pins. Soft enamel, hard enamel, die-cast, and more. Fast turnaround, low minimums.",
+    "Design and order custom enamel pins. Soft enamel, hard enamel, die-cast, and more. Fast turnaround, low minimums, unlimited revisions.",
 };
 
 export default function RootLayout({
@@ -27,8 +28,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <Nav />
+        <Navbar />
         {children}
+        <Footer />
       </body>
     </html>
   );
